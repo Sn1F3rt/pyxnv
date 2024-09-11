@@ -10,8 +10,19 @@ class Daemon:
     """
     A class to interact with the Nerva daemon's JSON-RPC interface.
 
-    Attributes:
-    -----------
+    Parameters
+    ----------
+    host : str, optional
+        The host of the daemon.
+    port : int, optional
+        The port of the daemon.
+    ssl : bool, optional
+        Whether to use SSL.
+    timeout : float, optional
+        The timeout for the request
+
+    Attributes
+    ----------
     url : str
         The URL of the daemon.
     timeout : float
@@ -28,7 +39,7 @@ class Daemon:
     def __init__(
         self,
         host: Optional[str] = "localhost",
-        port: Optional[int] = 5000,
+        port: Optional[int] = 17565,
         ssl: Optional[bool] = False,
         timeout: Optional[float] = 10.0,
     ):
@@ -52,8 +63,8 @@ class Daemon:
         """
         Get the current block count.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -64,13 +75,13 @@ class Daemon:
         """
         Get the block hash at a certain height.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         height : int
             The height of the block.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -83,16 +94,16 @@ class Daemon:
         """
         Get a block template for mining.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         wallet_address : str
             The wallet address to mine to.
 
         reserve_size : int
             The reserve size.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -106,13 +117,13 @@ class Daemon:
         """
         Submit a block to the network.
 
-        Parameters:
-        -----------
-        block_blob : list[str]
-            (Optional) The block blob to submit.
+        Parameters
+        ----------
+        block_blob : list[str], optional
+            The block blob to submit.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -123,8 +134,8 @@ class Daemon:
         """
         Get the last block header.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -135,13 +146,13 @@ class Daemon:
         """
         Get the block header by hash.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         block_hash : str
             The hash of the block.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -152,13 +163,13 @@ class Daemon:
         """
         Get the block header by height.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         height : int
             The height of the block.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -171,15 +182,15 @@ class Daemon:
         """
         Get a range of block headers.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         start_height : int
             The start height.
         end_height : int
             The end height.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -195,15 +206,15 @@ class Daemon:
         """
         Get a block by hash or height.
 
-        Parameters:
-        -----------
-        block_hash : str
+        Parameters
+        ----------
+        block_hash : str, optional
             The hash of the block.
-        height : int
+        height : int, optional
             The height of the block.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -221,8 +232,8 @@ class Daemon:
         """
         Get the connections to the daemon.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -233,8 +244,8 @@ class Daemon:
         """
         Get the information about the daemon.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -245,8 +256,8 @@ class Daemon:
         """
         Get the hard fork information.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -257,21 +268,21 @@ class Daemon:
         """
         Set bans for the daemon.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         bans : list
             The bans to set. Each ban should be a dictionary with the following keys:
                 - host : str
                     Host to ban (IP in A.B.C.D format).
-                - ip : int (optional)
+                - ip : int, optional
                     IP to ban (int format).
                 - ban : bool
                     Set `true` to ban, `false` to unban.
                 - seconds : int
                     Time to ban in seconds.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -282,8 +293,8 @@ class Daemon:
         """
         Get the bans of the daemon.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -294,13 +305,13 @@ class Daemon:
         """
         Flush the transaction pool.
 
-        Parameters:
-        -----------
-        txids : list
-            (Optional) The transaction IDs to flush. If not provided, all transactions will be flushed.
+        Parameters
+        ----------
+        txids : list, optional
+            The transaction IDs to flush. If not provided, all transactions will be flushed.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -318,8 +329,8 @@ class Daemon:
         """
         Get the output histogram.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         amounts : list
             The amounts to get the histogram for.
         min_count : int
@@ -331,8 +342,8 @@ class Daemon:
         recent_cutoff : int
             The recent cutoff.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -352,8 +363,8 @@ class Daemon:
         """
         Get the version of the daemon.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -364,15 +375,15 @@ class Daemon:
         """
         Get the coinbase transaction sum.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         height : int
             The height of the block.
         count : int
             The count of blocks.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -385,13 +396,13 @@ class Daemon:
         """
         Get the fee estimate.
 
-        Parameters:
-        -----------
-        grace_blocks : int
-            (Optional) The grace blocks.
+        Parameters
+        ----------
+        grace_blocks : int, optional
+            The number of grace blocks.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -405,8 +416,8 @@ class Daemon:
         """
         Get the alternate chains.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -417,13 +428,13 @@ class Daemon:
         """
         Relay transactions to the network.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         txids : list
             The transaction IDs to relay.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -434,8 +445,8 @@ class Daemon:
         """
         Get the sync information of the daemon.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -446,8 +457,8 @@ class Daemon:
         """
         Get the transaction pool backlog.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -460,8 +471,8 @@ class Daemon:
         """
         Get the output distribution.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         amounts : list
             The amounts to get the distribution for.
         from_height : int
@@ -471,8 +482,8 @@ class Daemon:
         cumulative : bool
             Whether to get the cumulative distribution.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -491,8 +502,8 @@ class Daemon:
         """
         Prune the blockchain.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -503,13 +514,13 @@ class Daemon:
         """
         Flush the cache.
 
-        Parameters:
-        -----------
-        bad_txs : bool
+        Parameters
+        ----------
+        bad_txs : bool, optional
             Whether to flush the bad transactions.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -520,13 +531,13 @@ class Daemon:
         """
         Get the generated coins.
 
-        Parameters:
-        -----------
-        height : int
-            (Optional) The height.
+        Parameters
+        ----------
+        height : int, optional
+            The height.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -539,8 +550,8 @@ class Daemon:
         """
         Get the minimum version of the daemon.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -551,13 +562,13 @@ class Daemon:
         """
         Get the transaction public key.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         extra : str
             The extra data.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -570,8 +581,8 @@ class Daemon:
         """
         Decode the outputs of transactions.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         tx_hashes : list
             The transaction hashes.
         sec_view_key : str
@@ -579,8 +590,8 @@ class Daemon:
         address : str
             The address to decode.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 
@@ -598,13 +609,13 @@ class Daemon:
         """
         Add a peer to the daemon.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         host : str
             The host of the peer.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             The response from the daemon.
 

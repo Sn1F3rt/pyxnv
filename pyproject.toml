@@ -7,7 +7,7 @@ authors = ["Sayan Bhattacharyya <sayan@sn1f3rt.dev>"]
 readme = "README.md"
 homepage = "https://github.com/Sn1F3rt/pyxnv"
 repository = "https://github.com/Sn1F3rt/pyxnv"
-documentation = "https://github.com/Sn1F3rt/pyxnv"
+documentation = "https://github.com/Sn1F3rt/pyxnv?tab=readme-ov-file#documentation"
 keywords = ["nerva", "cryptocurrency", "json-rpc", "bindings", "python"]
 classifiers = [
     "Development Status :: 3 - Alpha",

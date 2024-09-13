@@ -37,6 +37,25 @@ python -m pip install pyxnv
 
 Developers please refer to the docstrings in the code for more information. Full API reference will be available soon.
 
+Here is a simple example to get you started:
+
+```python
+import asyncio
+
+from xnv import Daemon
+
+
+async def main():
+    daemon = Daemon(
+        host="x.y.z.w",
+    )
+
+    print(await daemon.get_info())
+
+
+asyncio.run(main())
+```
+
 ## Support
 
 - [Project Issues](https://github.com/Sn1F3rt/pyxnv/issues)

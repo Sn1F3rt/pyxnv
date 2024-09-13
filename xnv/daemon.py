@@ -39,7 +39,7 @@ class Daemon:
     def __init__(
         self,
         host: Optional[str] = "localhost",
-        port: Optional[int] = 17565,
+        port: Optional[int] = 17566,
         ssl: Optional[bool] = False,
         timeout: Optional[float] = 10.0,
     ):

@@ -57,7 +57,7 @@ class Daemon:
                 headers=self.headers,
                 timeout=self.timeout,
             ) as response:
-                return await response.json()
+                return await response.json(content_type=None)
 
     async def get_block_count(self) -> dict:
         """

@@ -75,7 +75,7 @@ class Wallet:
                 auth=self.auth,
                 timeout=self.timeout,
             ) as response:
-                return await response.json()
+                return await response.json(content_type=None)
 
     async def get_balance(
         self, account_index: int, address_indices: Optional[list[int]] = None

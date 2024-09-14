@@ -1624,14 +1624,14 @@ class Wallet:
             },
         )
 
-    async def set_donate_level(self, donate: int) -> dict:
+    async def set_donate_level(self, blocks: int) -> dict:
         """
         Set the donation level for the Nerva network.
 
         Parameters
         ----------
-        donate : int
-            The donation level.
+        blocks : int
+            Number of blocks to donate.
 
         Returns
         -------
@@ -1639,7 +1639,7 @@ class Wallet:
             The response from wallet RPC.
 
         """
-        return await self._request("set_donate_level", {"donate": donate})
+        return await self._request("set_donate_level", {"blocks": blocks})
 
     async def stop_mining(self) -> dict:
         """

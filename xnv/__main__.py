@@ -20,7 +20,7 @@ def show_version() -> None:
     v = xnv.version_info
     entries.append(
         f"- pyxnv v{v.major}.{v.minor}.{v.micro}"
-        + (f"-{v.releaselevel}" if v.releaselevel != "final" else "")
+        + (f"{v.releaselevel[0]}{v.serial}" if v.releaselevel != "final" else "")
     )
 
     entries.append(f"- aiohttp v{aiohttp.__version__}")

@@ -1,18 +1,22 @@
 from typing import NamedTuple, Literal
 
-from .daemon import *
-from .wallet import *
-from .utils import *
+from . import (
+    daemon as daemon,
+    wallet as wallet,
+    utils as utils,
+)
 
 
 class VersionInfo(NamedTuple):
     major: int
     minor: int
     micro: int
-    release_level: Literal["alpha", "beta", "candidate", "final"]
+    releaselevel: Literal["alpha", "beta", "final"]
     serial: int
 
 
 version_info: VersionInfo = VersionInfo(
-    major=1, minor=0, micro=0, release_level="alpha", serial=2
+    major=1, minor=0, micro=0, releaselevel="alpha", serial=2
 )
+
+del NamedTuple, Literal, VersionInfo

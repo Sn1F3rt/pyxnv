@@ -496,7 +496,7 @@ class DaemonJSONRPC:
 
         """
         return await self._request(
-            "get_output_distribution.bin",
+            "get_output_distribution",
             {
                 "amounts": amounts,
                 "from_height": from_height,

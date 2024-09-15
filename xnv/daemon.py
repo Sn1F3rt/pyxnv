@@ -801,6 +801,7 @@ class DaemonOther:
         txs_hashes: list[str],
         decode_as_json: Optional[bool] = False,
         prune: Optional[bool] = False,
+        split: Optional[bool] = False,
     ):
         """
         Get a list of transactions.
@@ -813,6 +814,8 @@ class DaemonOther:
             Whether to decode as JSON.
         prune : bool, optional
             Whether to prune the transactions.
+        split : bool, optional
+            Whether to split the transactions.
 
         Returns
         -------
@@ -826,6 +829,7 @@ class DaemonOther:
                 "txs_hashes": txs_hashes,
                 "decode_as_json": decode_as_json,
                 "prune": prune,
+                "split": split,
             },
         )
 

@@ -16,7 +16,7 @@ class VersionInfo(NamedTuple):
 
 
 version_info: VersionInfo = VersionInfo(
-    major=1, minor=0, micro=0, releaselevel="alpha", serial=3
+    major=1, minor=0, micro=0, releaselevel="beta", serial=0
 )
 
 del NamedTuple, Literal, VersionInfo

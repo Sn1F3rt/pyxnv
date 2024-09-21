@@ -35,8 +35,6 @@ class Wallet:
         The authentication for the wallet's JSON-RPC interface.
     timeout : float
         The timeout for the request.
-    endpoint : str
-        The endpoint for the JSON-RPC interface.
     headers : Dict[str, str]
         The headers for the request.
 
@@ -46,7 +44,6 @@ class Wallet:
         "url",
         "auth",
         "timeout",
-        "endpoint",
         "headers",
     ]
 
@@ -65,13 +62,12 @@ class Wallet:
         )
         self.timeout: float = timeout
 
-        self.endpoint: str = "/json_rpc"
         self.headers: Dict[str, str] = {"Content-Type": "application/json"}
 
     async def _request(self, method: str, params: Dict[str, Any]) -> Dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                f"{self.url}/{self.endpoint}",
+                f"{self.url}/json_rpc",
                 json={"jsonrpc": "2.0", "id": 0, "method": method, "params": params},
                 headers=self.headers,
                 auth=self.auth,

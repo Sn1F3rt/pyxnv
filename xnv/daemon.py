@@ -1,4 +1,6 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import Optional, List, Dict, Any
 
 import aiohttp
 
@@ -27,12 +29,11 @@ class DaemonJSONRPC:
         The URL of the daemon.
     timeout : float
         The timeout for the request.
-    headers : dict
+    headers : Dict[str, str]
         The headers for the request.
-
     """
 
-    __slots__ = ["url", "timeout", "endpoint", "headers"]
+    __slots__ = ["url", "timeout", "headers"]
 
     def __init__(
         self,
@@ -40,13 +41,12 @@ class DaemonJSONRPC:
         port: Optional[int] = 17566,
         ssl: Optional[bool] = False,
         timeout: Optional[float] = 10.0,
-    ):
-        self.url = f"{'https' if ssl else 'http'}://{host}:{port}"
-        self.timeout = timeout
+    ) -> None:
+        self.url: str = f"{'https' if ssl else 'http'}://{host}:{port}"
+        self.timeout: float = timeout
+        self.headers: Dict[str, str] = {"Content-Type": "application/json"}
 
-        self.headers = {"Content-Type": "application/json"}
-
-    async def _request(self, method: str, params: dict) -> dict:
+    async def _request(self, method: str, params: Dict[str, Any]) -> Dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 f"{self.url}/json_rpc",
@@ -56,7 +56,7 @@ class DaemonJSONRPC:
             ) as response:
                 return await response.json(content_type=None)
 
-    async def get_block_count(self) -> dict:
+    async def get_block_count(self) -> Dict[str, Any]:
         """
         Get the current block count.
 
@@ -64,11 +64,10 @@ class DaemonJSONRPC:
         -------
         dict
             The response from the daemon.
-
         """
         return await self._request("get_block_count", {})
 
-    async def on_get_block_hash(self, height: int) -> dict:
+    async def on_get_block_hash(self, height: int) -> Dict[str, Any]:
         """
         Get the block hash at a certain height.
 
@@ -87,7 +86,7 @@ class DaemonJSONRPC:
 
     async def get_block_template(
         self, wallet_address: str, reserve_size: int
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Get a block template for mining.
 
@@ -110,36 +109,36 @@ class DaemonJSONRPC:
             {"wallet_address": wallet_address, "reserve_size": reserve_size},
         )
 
-    async def submit_block(self, block_blob: list[str]) -> dict:
+    async def submit_block(self, block_blob: List[str]) -> Dict[str, Any]:
         """
         Submit a block to the network.
 
         Parameters
         ----------
-        block_blob : list[str], optional
+        block_blob : List[str]
             The block blob to submit.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("submit_block", {"blob": block_blob})
 
-    async def get_last_block_header(self) -> dict:
+    async def get_last_block_header(self) -> Dict[str, Any]:
         """
         Get the last block header.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_last_block_header", {})
 
-    async def get_block_header_by_hash(self, block_hash: str) -> dict:
+    async def get_block_header_by_hash(self, block_hash: str) -> Dict[str, Any]:
         """
         Get the block header by hash.
 
@@ -150,13 +149,13 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_block_header_by_hash", {"hash": block_hash})
 
-    async def get_block_header_by_height(self, height: int) -> dict:
+    async def get_block_header_by_height(self, height: int) -> Dict[str, Any]:
         """
         Get the block header by height.
 
@@ -167,7 +166,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -175,7 +174,7 @@ class DaemonJSONRPC:
 
     async def get_block_headers_range(
         self, start_height: int, end_height: int
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Get a range of block headers.
 
@@ -188,7 +187,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -199,7 +198,7 @@ class DaemonJSONRPC:
 
     async def get_block(
         self, block_hash: Optional[str] = None, height: Optional[int] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Get a block by hash or height.
 
@@ -212,7 +211,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -225,49 +224,49 @@ class DaemonJSONRPC:
         else:
             raise ValueError("Either block_hash OR height must be provided.")
 
-    async def get_connections(self) -> dict:
+    async def get_connections(self) -> Dict[str, Any]:
         """
         Get the connections to the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_connections", {})
 
-    async def get_info(self) -> dict:
+    async def get_info(self) -> Dict[str, Any]:
         """
         Get the information about the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_info", {})
 
-    async def hard_fork_info(self) -> dict:
+    async def hard_fork_info(self) -> Dict[str, Any]:
         """
         Get the hard fork information.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("hard_fork_info", {})
 
-    async def set_bans(self, bans: list) -> dict:
+    async def set_bans(self, bans: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Set bans for the daemon.
 
         Parameters
         ----------
-        bans : list
+        bans : List[Dict[str, Any]]
             The bans to set. Each ban should be a dictionary with the following keys:
                 - host : str
                     Host to ban (IP in A.B.C.D format).
@@ -280,25 +279,25 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("set_bans", {"bans": bans})
 
-    async def get_bans(self) -> dict:
+    async def get_bans(self) -> Dict[str, Any]:
         """
         Get the bans of the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_bans", {})
 
-    async def flush_txpool(self, txids: Optional[list] = None) -> dict:
+    async def flush_txpool(self, txids: Optional[list] = None) -> Dict[str, Any]:
         """
         Flush the transaction pool.
 
@@ -309,7 +308,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -322,7 +321,7 @@ class DaemonJSONRPC:
         max_count: int,
         unlocked: bool,
         recent_cutoff: int,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Get the output histogram.
 
@@ -341,7 +340,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -356,19 +355,19 @@ class DaemonJSONRPC:
             },
         )
 
-    async def get_version(self) -> dict:
+    async def get_version(self) -> Dict[str, Any]:
         """
         Get the version of the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_version", {})
 
-    async def get_coinbase_tx_sum(self, height: int, count: int) -> dict:
+    async def get_coinbase_tx_sum(self, height: int, count: int) -> Dict[str, Any]:
         """
         Get the coinbase transaction sum.
 
@@ -381,7 +380,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -389,7 +388,9 @@ class DaemonJSONRPC:
             "get_coinbase_tx_sum", {"height": height, "count": count}
         )
 
-    async def get_fee_estimate(self, grace_blocks: Optional[int] = None) -> dict:
+    async def get_fee_estimate(
+        self, grace_blocks: Optional[int] = None
+    ) -> Dict[str, Any]:
         """
         Get the fee estimate.
 
@@ -400,7 +401,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -409,19 +410,19 @@ class DaemonJSONRPC:
             {"grace_blocks": grace_blocks} if grace_blocks else {},
         )
 
-    async def get_alternate_chains(self) -> dict:
+    async def get_alternate_chains(self) -> Dict[str, Any]:
         """
         Get the alternate chains.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_alternate_chains", {})
 
-    async def relay_tx(self, txids: list) -> dict:
+    async def relay_tx(self, txids: list) -> Dict[str, Any]:
         """
         Relay transactions to the network.
 
@@ -432,31 +433,31 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("relay_tx", {"txids": txids})
 
-    async def sync_info(self) -> dict:
+    async def sync_info(self) -> Dict[str, Any]:
         """
         Get the sync information of the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("sync_info", {})
 
-    async def get_txpool_backlog(self) -> dict:
+    async def get_txpool_backlog(self) -> Dict[str, Any]:
         """
         Get the transaction pool backlog.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -470,7 +471,7 @@ class DaemonJSONRPC:
         cumulative: Optional[bool] = False,
         binary: Optional[bool] = True,
         compress: Optional[bool] = False,
-    ):
+    ) -> Dict[str, Any]:
         """
         Get the output distribution.
 
@@ -491,7 +492,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -507,19 +508,19 @@ class DaemonJSONRPC:
             },
         )
 
-    async def prune_blockchain(self) -> dict:
+    async def prune_blockchain(self) -> Dict[str, Any]:
         """
         Prune the blockchain.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("prune_blockchain", {})
 
-    async def flush_cache(self, bad_txs: Optional[bool] = False) -> dict:
+    async def flush_cache(self, bad_txs: Optional[bool] = False) -> Dict[str, Any]:
         """
         Flush the cache.
 
@@ -530,13 +531,15 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("flush_cache", {"bad_txs": bad_txs})
 
-    async def get_generated_coins(self, height: Optional[int] = None) -> dict:
+    async def get_generated_coins(
+        self, height: Optional[int] = None
+    ) -> Dict[str, Any]:
         """
         Get the generated coins.
 
@@ -547,7 +550,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -555,19 +558,19 @@ class DaemonJSONRPC:
             "get_generated_coins", {"height": height} if height else {}
         )
 
-    async def get_min_version(self) -> dict:
+    async def get_min_version(self) -> Dict[str, Any]:
         """
         Get the minimum version of the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_min_version", {})
 
-    async def get_tx_pubkey(self, extra: str) -> dict:
+    async def get_tx_pubkey(self, extra: str) -> Dict[str, Any]:
         """
         Get the transaction public key.
 
@@ -578,7 +581,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -586,7 +589,7 @@ class DaemonJSONRPC:
 
     async def decode_outputs(
         self, tx_hashes: list, sec_view_key: str, address: str
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Decode the outputs of transactions.
 
@@ -601,7 +604,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -614,7 +617,7 @@ class DaemonJSONRPC:
             },
         )
 
-    async def add_peer(self, host: str) -> dict:
+    async def add_peer(self, host: str) -> Dict[str, Any]:
         """
         Add a peer to the daemon.
 
@@ -625,7 +628,7 @@ class DaemonJSONRPC:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -672,7 +675,9 @@ class DaemonOther:
 
         self.headers = {"Content-Type": "application/json"}
 
-    async def _request(self, endpoint: str, params: dict) -> dict:
+    async def _request(
+        self, endpoint: str, params: Dict[str, Any]
+    ) -> Dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 f"{self.url}/{endpoint}",
@@ -682,13 +687,13 @@ class DaemonOther:
             ) as response:
                 return await response.json(content_type=None)
 
-    async def get_height(self) -> dict:
+    async def get_height(self) -> Dict[str, Any]:
         """
         Get the current block height.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -696,7 +701,7 @@ class DaemonOther:
 
     async def get_blocks_bin(
         self, block_ids: list[str], start_height: int, prune: bool
-    ):
+    ) -> Dict[str, Any]:
         """
         Get a list of blocks.
 
@@ -711,7 +716,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -720,24 +725,26 @@ class DaemonOther:
             {"block_ids": block_ids, "start_height": start_height, "prune": prune},
         )
 
-    async def get_blocks_by_height_bin(self, heights: list[int]):
+    async def get_blocks_by_height_bin(self, heights: List[int]) -> Dict[str, Any]:
         """
         Get a list of blocks by height.
 
         Parameters
         ----------
-        heights : list[int]
+        heights : List[int]
             The block heights to get.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_blocks_by_height.bin", {"heights": heights})
 
-    async def get_hashes_bin(self, block_ids: list[str], start_height: int):
+    async def get_hashes_bin(
+        self, block_ids: List[str], start_height: int
+    ) -> Dict[str, Any]:
         """
         Get the hashes of blocks.
 
@@ -750,7 +757,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -758,7 +765,7 @@ class DaemonOther:
             "get_hashes.bin", {"block_ids": block_ids, "start_height": start_height}
         )
 
-    async def get_o_indexes_bin(self, txid: str):
+    async def get_o_indexes_bin(self, txid: str) -> Dict[str, Any]:
         """
         Get the output indexes of a transaction.
 
@@ -769,19 +776,19 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_o_indexes.bin", {"txid": txid})
 
-    async def get_outs_bin(self, outputs: list[dict]):
+    async def get_outs_bin(self, outputs: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Get the outputs.
 
         Parameters
         ----------
-        outputs : list[dict]
+        outputs : List[Dict[str, Any]]
             List of outputs as dictionaries with the following keys:
                 - amount : int
                     The amount.
@@ -790,7 +797,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -802,7 +809,7 @@ class DaemonOther:
         decode_as_json: Optional[bool] = False,
         prune: Optional[bool] = False,
         split: Optional[bool] = False,
-    ):
+    ) -> Dict[str, Any]:
         """
         Get a list of transactions.
 
@@ -819,7 +826,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -833,30 +840,30 @@ class DaemonOther:
             },
         )
 
-    async def get_alt_blocks_hashes(self):
+    async def get_alt_blocks_hashes(self) -> Dict[str, Any]:
         """
         Get the hashes of alternate blocks.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_alt_blocks_hashes", {})
 
-    async def is_key_image_spent(self, key_images: list[str]):
+    async def is_key_image_spent(self, key_images: List[str]) -> Dict[str, Any]:
         """
         Check if key images are spent.
 
         Parameters
         ----------
-        key_images : list[str]
+        key_images : List[str]
             List of key images.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -864,7 +871,7 @@ class DaemonOther:
 
     async def send_raw_transaction(
         self, tx_as_hex: str, do_not_relay: Optional[bool] = False
-    ):
+    ) -> Dict[str, Any]:
         """
         Send a raw transaction.
 
@@ -877,7 +884,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -892,7 +899,7 @@ class DaemonOther:
         threads_count: int,
         do_background_mining: bool,
         ignore_battery: bool,
-    ):
+    ) -> Dict[str, Any]:
         """
         Start mining.
 
@@ -909,7 +916,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -923,7 +930,7 @@ class DaemonOther:
             },
         )
 
-    async def set_donate_level(self, blocks: int):
+    async def set_donate_level(self, blocks: int) -> Dict[str, Any]:
         """
         Set the donate level.
 
@@ -934,73 +941,73 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("set_donate_level", {"blocks": blocks})
 
-    async def stop_mining(self):
+    async def stop_mining(self) -> Dict[str, Any]:
         """
         Stop mining.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("stop_mining", {})
 
-    async def mining_status(self):
+    async def mining_status(self) -> Dict[str, Any]:
         """
         Get the mining status.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("mining_status", {})
 
-    async def save_bc(self):
+    async def save_bc(self) -> Dict[str, Any]:
         """
         Save the blockchain.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("save_bc", {})
 
-    async def get_peer_list(self):
+    async def get_peer_list(self) -> Dict[str, Any]:
         """
         Get the peer list.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_peer_list", {})
 
-    async def get_public_nodes(self):
+    async def get_public_nodes(self) -> Dict[str, Any]:
         """
         Get the public nodes.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_public_nodes", {})
 
-    async def set_log_hash_rate(self, visible: bool):
+    async def set_log_hash_rate(self, visible: bool) -> Dict[str, Any]:
         """
         Set the log hash rate.
 
@@ -1011,13 +1018,13 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("set_log_hash_rate", {"visible": visible})
 
-    async def set_log_level(self, level: int):
+    async def set_log_level(self, level: int) -> Dict[str, Any]:
         """
         Set the log level.
 
@@ -1028,13 +1035,13 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("set_log_level", {"level": level})
 
-    async def set_log_categories(self, categories: str):
+    async def set_log_categories(self, categories: str) -> Dict[str, Any]:
         """
         Set the log categories.
 
@@ -1045,61 +1052,63 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("set_log_categories", {"categories": categories})
 
-    async def get_transaction_pool(self):
+    async def get_transaction_pool(self) -> Dict[str, Any]:
         """
         Get the transaction pool.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_transaction_pool", {})
 
-    async def get_transaction_pool_hashes_bin(self):
+    async def get_transaction_pool_hashes_bin(self) -> Dict[str, Any]:
         """
         Get the transaction pool hashes.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_transaction_pool_hashes.bin", {})
 
-    async def get_transaction_pool_hashes(self):
+    async def get_transaction_pool_hashes(self) -> Dict[str, Any]:
         """
         Get the transaction pool hashes.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_transaction_pool_hashes", {})
 
-    async def get_transaction_pool_stats(self):
+    async def get_transaction_pool_stats(self) -> Dict[str, Any]:
         """
         Get the transaction pool stats.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_transaction_pool_stats", {})
 
-    async def set_bootstrap_daemon(self, address: str, username: str, password: str):
+    async def set_bootstrap_daemon(
+        self, address: str, username: str, password: str
+    ) -> Dict[str, Any]:
         """
         Set the bootstrap daemon.
 
@@ -1114,7 +1123,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -1123,55 +1132,55 @@ class DaemonOther:
             {"address": address, "username": username, "password": password},
         )
 
-    async def stop_daemon(self):
+    async def stop_daemon(self) -> Dict[str, Any]:
         """
         Stop the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("stop_daemon", {})
 
-    async def get_info(self):
+    async def get_info(self) -> Dict[str, Any]:
         """
         Get the information of the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_info", {})
 
-    async def get_net_stats(self):
+    async def get_net_stats(self) -> Dict[str, Any]:
         """
         Get the network stats.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_net_stats", {})
 
-    async def get_limit(self):
+    async def get_limit(self) -> Dict[str, Any]:
         """
         Get daemon bandwidth limits.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("get_limit", {})
 
-    async def set_limit(self, limit_down: int, limit_up: int):
+    async def set_limit(self, limit_down: int, limit_up: int) -> Dict[str, Any]:
         """
         Set daemon bandwidth limits.
 
@@ -1184,7 +1193,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -1192,37 +1201,39 @@ class DaemonOther:
             "set_limit", {"limit_down": limit_down, "limit_up": limit_up}
         )
 
-    async def out_peers(self):
+    async def out_peers(self) -> Dict[str, Any]:
         """
         Get the outgoing peers.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("out_peers", {})
 
-    async def in_peers(self):
+    async def in_peers(self) -> Dict[str, Any]:
         """
         Get the incoming peers.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
         return await self._request("in_peers", {})
 
-    async def get_outs(self, outputs: list[dict], get_txid: bool):
+    async def get_outs(
+        self, outputs: List[Dict[str, Any]], get_txid: bool
+    ) -> Dict[str, Any]:
         """
         Get outputs.
 
         Parameters
         ----------
-        outputs : list[dict]
+        outputs : List[Dict[str, Any]]
             List of outputs as dictionaries with the following keys:
                 - amount : int
                     The amount.
@@ -1233,7 +1244,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -1241,13 +1252,13 @@ class DaemonOther:
             "get_outs", {"outputs": outputs, "get_txid": get_txid}
         )
 
-    async def update(self):
+    async def update(self) -> Dict[str, Any]:
         """
         Update the daemon.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -1261,7 +1272,7 @@ class DaemonOther:
         cumulative: Optional[bool] = False,
         binary: Optional[bool] = True,
         compress: Optional[bool] = False,
-    ):
+    ) -> Dict[str, Any]:
         """
         Get the output distribution.
 
@@ -1282,7 +1293,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """
@@ -1298,7 +1309,7 @@ class DaemonOther:
             },
         )
 
-    async def pop_blocks(self, nblocks: int):
+    async def pop_blocks(self, nblocks: int) -> Dict[str, Any]:
         """
         Pop blocks from the blockchain.
 
@@ -1309,7 +1320,7 @@ class DaemonOther:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from the daemon.
 
         """

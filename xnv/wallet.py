@@ -1,4 +1,6 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import Optional, List, Dict, Any
 
 import aiohttp
 
@@ -29,14 +31,14 @@ class Wallet:
     ----------
     url : str
         The URL of the wallet's JSON-RPC interface.
-    auth : aiohttp.BasicAuth
+    auth : Optional[aiohttp.BasicAuth]
         The authentication for the wallet's JSON-RPC interface.
     timeout : float
         The timeout for the request.
     endpoint : str
         The endpoint for the JSON-RPC interface.
-    headers : dict
-        The headers for the request
+    headers : Dict[str, str]
+        The headers for the request.
 
     """
 
@@ -56,17 +58,17 @@ class Wallet:
         timeout: float = 10.0,
         username: str = "",
         password: str = "",
-    ):
-        self.url = f"http{'s' if ssl else ''}://{host}:{port}"
-        self.auth = (
+    ) -> None:
+        self.url: str = f"http{'s' if ssl else ''}://{host}:{port}"
+        self.auth: Optional[aiohttp.BasicAuth] = (
             aiohttp.BasicAuth(username, password) if username and password else None
         )
-        self.timeout = timeout
+        self.timeout: float = timeout
 
-        self.endpoint = "/json_rpc"
-        self.headers = {"Content-Type": "application/json"}
+        self.endpoint: str = "/json_rpc"
+        self.headers: Dict[str, str] = {"Content-Type": "application/json"}
 
-    async def _request(self, method: str, params: dict) -> dict:
+    async def _request(self, method: str, params: Dict[str, Any]) -> Dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 f"{self.url}/{self.endpoint}",
@@ -78,8 +80,8 @@ class Wallet:
                 return await response.json(content_type=None)
 
     async def get_balance(
-        self, account_index: int, address_indices: Optional[list[int]] = None
-    ) -> dict:
+        self, account_index: int, address_indices: Optional[List[int]] = None
+    ) -> Dict[str, Any]:
         """
         Return the wallet's balance.
 
@@ -87,14 +89,13 @@ class Wallet:
         ----------
         account_index : int
             Return balance for this account.
-        address_indices : list[int], optional
+        address_indices : List[int], optional
             Return balance detail for those subaddresses.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
-
         """
         return await self._request(
             "get_balance",
@@ -105,8 +106,8 @@ class Wallet:
         )
 
     async def get_address(
-        self, account_index: int, address_indices: Optional[list[int]] = None
-    ) -> dict:
+        self, account_index: int, address_indices: Optional[List[int]] = None
+    ) -> Dict[str, Any]:
         """
         Return the wallet's addresses for an account. Optionally filter for specific set of subaddresses.
 
@@ -114,12 +115,12 @@ class Wallet:
         ----------
         account_index : int
             Get addresses for this account.
-        address_indices : list[int], optional
+        address_indices : List[int], optional
             Return specific set of subaddresses.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -131,7 +132,7 @@ class Wallet:
             },
         )
 
-    async def get_address_index(self, address: str) -> dict:
+    async def get_address_index(self, address: str) -> Dict[str, Any]:
         """
         Get account and address indexes from a specific (sub)address.
 
@@ -142,7 +143,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -150,7 +151,7 @@ class Wallet:
 
     async def create_address(
         self, account_index: int, label: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Create a new address for an account.
 
@@ -163,7 +164,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -171,26 +172,28 @@ class Wallet:
             "create_address", {"account_index": account_index, "label": label}
         )
 
-    async def label_address(self, index: dict, label: str) -> dict:
+    async def label_address(
+        self, index: Dict[str, int], label: str
+    ) -> Dict[str, Any]:
         """
         Label an address.
 
         Parameters
         ----------
-        index : dict
+        index : Dict[str, int]
             Subaddress index in the form {"major": 0, "minor": 0}.
         label : str
             The label of the address.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("label_address", {"index": index, "label": label})
 
-    async def get_accounts(self, tag: Optional[str] = None) -> dict:
+    async def get_accounts(self, tag: Optional[str] = None) -> Dict[str, Any]:
         """
         Return the wallet's accounts.
 
@@ -201,13 +204,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("get_accounts", {"tag": tag})
 
-    async def create_account(self, label: Optional[str] = None) -> dict:
+    async def create_account(self, label: Optional[str] = None) -> Dict[str, Any]:
         """
         Create a new account.
 
@@ -218,13 +221,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("create_account", {"label": label})
 
-    async def label_account(self, account_index: int, label: str) -> dict:
+    async def label_account(self, account_index: int, label: str) -> Dict[str, Any]:
         """
         Label an account.
 
@@ -237,7 +240,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -245,19 +248,19 @@ class Wallet:
             "label_account", {"account_index": account_index, "label": label}
         )
 
-    async def get_account_tags(self) -> dict:
+    async def get_account_tags(self) -> Dict[str, Any]:
         """
         Return the wallet's account tags.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("get_account_tags", {})
 
-    async def tag_accounts(self, tag: str, accounts: list) -> dict:
+    async def tag_accounts(self, tag: str, accounts: List[int]) -> Dict[str, Any]:
         """
         Apply a filtering tag to a list of accounts.
 
@@ -265,12 +268,12 @@ class Wallet:
         ----------
         tag : str
             The tag to apply.
-        accounts : list
+        accounts : List[int]
             The accounts to tag.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -278,35 +281,52 @@ class Wallet:
             "tag_accounts", {"tag": tag, "accounts": accounts}
         )
 
-    async def untag_accounts(self, accounts: list) -> dict:
+    async def untag_accounts(self, accounts: List[int]) -> Dict[str, Any]:
         """
         Remove filtering tag from a list of accounts.
 
         Parameters
         ----------
-        accounts : list
+        accounts : List[int]
             The accounts to untag.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("untag_accounts", {"accounts": accounts})
 
-    async def set_account_tag_description(self, tag: str, description: str) -> dict:
+    async def set_account_tag_description(
+        self, tag: str, description: str
+    ) -> Dict[str, Any]:
+        """
+        Set description for an account tag.
+
+        Parameters
+        ----------
+        tag : str
+            The tag to set description for.
+        description : str
+            Description for the tag.
+
+        Returns
+        -------
+        Dict[str, Any]
+            The response from wallet RPC.
+        """
         return await self._request(
             "set_account_tag_description", {"tag": tag, "description": description}
         )
 
-    async def get_height(self) -> dict:
+    async def get_height(self) -> Dict[str, Any]:
         """
         Return the wallet's current block height.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -314,9 +334,9 @@ class Wallet:
 
     async def transfer(
         self,
-        destinations: list,
+        destinations: List[Dict[str, Any]],
         account_index: int,
-        subaddr_indices: list,
+        subaddr_indices: List[int],
         priority: int,
         mixin: int,
         ring_size: int,
@@ -326,17 +346,17 @@ class Wallet:
         get_tx_metadata: bool,
         do_not_relay: bool,
         payment_id: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Send a transfer from the wallet to a single recipient.
 
         Parameters
         ----------
-        destinations : list
+        destinations : List[Dict[str, Any]]
             The destinations to send the transfer to.
         account_index : int
             The account to send the transfer from.
-        subaddr_indices : list
+        subaddr_indices : List[int]
             Array of subaddress indices to send from.
         priority : int
             Set a priority for the transfer.
@@ -359,7 +379,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -383,9 +403,9 @@ class Wallet:
 
     async def transfer_split(
         self,
-        destinations: list,
+        destinations: List[Dict[str, Any]],
         account_index: int,
-        subaddr_indices: list,
+        subaddr_indices: List[int],
         priority: int,
         mixin: int,
         ring_size: int,
@@ -395,17 +415,17 @@ class Wallet:
         get_tx_metadata: bool,
         do_not_relay: bool,
         payment_id: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Send a transfer from the wallet to multiple recipients.
 
         Parameters
         ----------
-        destinations : list
+        destinations : List[Dict[str, Any]]
             The destinations to send the transfer to.
         account_index : int
             The account to send the transfer from.
-        subaddr_indices : list
+        subaddr_indices : List[int]
             Array of subaddress indices to send from.
         priority : int
             Set a priority for the transfer.
@@ -428,7 +448,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -452,7 +472,7 @@ class Wallet:
 
     async def sign_transfer(
         self, unsigned_txset: str, export_raw: Optional[bool] = False
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Sign a transaction created on a read-only wallet (in cold-signing process).
 
@@ -465,7 +485,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -474,7 +494,7 @@ class Wallet:
             {"unsigned_txset": unsigned_txset, "export_raw": export_raw},
         )
 
-    async def describe_transfer(self, unsigned_txset: str) -> dict:
+    async def describe_transfer(self, unsigned_txset: str) -> Dict[str, Any]:
         """
         Return a list of unsigned transfers in the set, their count, and total amount.
 
@@ -485,7 +505,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -493,7 +513,7 @@ class Wallet:
             "describe_transfer", {"unsigned_txset": unsigned_txset}
         )
 
-    async def submit_transfer(self, tx_data_hex: str) -> dict:
+    async def submit_transfer(self, tx_data_hex: str) -> Dict[str, Any]:
         """
         Submit a previously signed transaction.
 
@@ -504,7 +524,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -516,7 +536,7 @@ class Wallet:
         do_not_relay: Optional[str] = False,
         get_tx_hex: Optional[bool] = False,
         get_tx_metadata: Optional[bool] = False,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Sweep the dust from the wallet.
 
@@ -533,7 +553,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -547,13 +567,13 @@ class Wallet:
             },
         )
 
-    async def sweep_unmixable(self) -> dict:
+    async def sweep_unmixable(self) -> Dict[str, Any]:
         """
         Sweep unmixable outputs from the wallet.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -563,7 +583,7 @@ class Wallet:
         self,
         address: str,
         account_index: int,
-        subaddr_indices: list,
+        subaddr_indices: List[int],
         priority: int,
         mixin: int,
         ring_size: int,
@@ -574,7 +594,7 @@ class Wallet:
         get_tx_hex: bool,
         get_tx_metadata: bool,
         payment_id: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Sweep all unlocked outputs in a specified subaddress to an address.
 
@@ -584,7 +604,7 @@ class Wallet:
             Destination public address.
         account_index : int
             Account to sweep from.
-        subaddr_indices : list
+        subaddr_indices : List[int]
             Array of subaddress indices to sweep from.
         priority : int
             Set a priority for the transfer.
@@ -609,7 +629,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -644,7 +664,7 @@ class Wallet:
         get_tx_metadata: bool,
         do_not_relay: bool,
         payment_id: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Sweep a single output to an address.
 
@@ -673,7 +693,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -693,7 +713,7 @@ class Wallet:
             },
         )
 
-    async def relay_tx(self, tx_hex: str) -> dict:
+    async def relay_tx(self, tx_hex: str) -> Dict[str, Any]:
         """
         Relay a transaction previously created with "do_not_relay" set to true.
 
@@ -704,25 +724,25 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("relay_tx", {"hex": tx_hex})
 
-    async def store(self) -> dict:
+    async def store(self) -> Dict[str, Any]:
         """
         Save the wallet file.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("store", {})
 
-    async def get_payments(self, payment_id: str) -> dict:
+    async def get_payments(self, payment_id: str) -> Dict[str, Any]:
         """
         Return a list of incoming payments using a given payment ID.
 
@@ -733,28 +753,28 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("get_payments", {"payment_id": payment_id})
 
     async def get_bulk_payments(
-        self, payment_ids: list, min_block_height: int
-    ) -> dict:
+        self, payment_ids: List[str], min_block_height: int
+    ) -> Dict[str, Any]:
         """
         Return a list of incoming payments using a given payment ID.
 
         Parameters
         ----------
-        payment_ids : list
+        payment_ids : List[str]
             Payment IDs to query.
         min_block_height : int
             The minimum block height to scan.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -767,9 +787,9 @@ class Wallet:
         self,
         transfer_type: str,
         account_index: int,
-        subaddr_indices: list,
+        subaddr_indices: List[int],
         verbose: Optional[bool] = False,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Return a list of incoming transfers to the wallet.
 
@@ -781,14 +801,14 @@ class Wallet:
             "unavailable": only transfers which are already spent.
         account_index : int
             Return transfers for this account.
-        subaddr_indices : list
+        subaddr_indices : List[int]
             Array of subaddress indices to query.
         verbose : bool, optional
             Enable verbose output.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -802,7 +822,7 @@ class Wallet:
             },
         )
 
-    async def query_key(self, key_type: str) -> dict:
+    async def query_key(self, key_type: str) -> Dict[str, Any]:
         """
         Return the spend or view private key.
 
@@ -816,7 +836,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -824,7 +844,7 @@ class Wallet:
 
     async def make_integrated_address(
         self, payment_id: str, standard_address: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Make an integrated address from the wallet address and a payment ID.
 
@@ -837,7 +857,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -846,7 +866,9 @@ class Wallet:
             {"payment_id": payment_id, "standard_address": standard_address},
         )
 
-    async def split_integrated_address(self, integrated_address: str) -> dict:
+    async def split_integrated_address(
+        self, integrated_address: str
+    ) -> Dict[str, Any]:
         """
         Retrieve the standard address and payment ID corresponding to an integrated address.
 
@@ -857,7 +879,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -865,67 +887,69 @@ class Wallet:
             "split_integrated_address", {"integrated_address": integrated_address}
         )
 
-    async def stop_wallet(self) -> dict:
+    async def stop_wallet(self) -> Dict[str, Any]:
         """
         Stop the wallet.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("stop_wallet", {})
 
-    async def rescan_blockchain(self) -> dict:
+    async def rescan_blockchain(self) -> Dict[str, Any]:
         """
         Re-scan the blockchain.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("rescan_blockchain", {})
 
-    async def set_tx_notes(self, txids: list[str], notes: list[str]) -> dict:
+    async def set_tx_notes(
+        self, txids: List[str], notes: List[str]
+    ) -> Dict[str, Any]:
         """
         Set arbitrary string notes for transactions.
 
         Parameters
         ----------
-        txids : list[str]
+        txids : List[str]
             Array of transaction IDs.
-        notes : list[str]
+        notes : List[str]
             Notes for the transactions.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("set_tx_notes", {"txids": txids, "notes": notes})
 
-    async def get_tx_notes(self, txids: list[str]) -> dict:
+    async def get_tx_notes(self, txids: List[str]) -> Dict[str, Any]:
         """
         Get string notes for transactions.
 
         Parameters
         ----------
-        txids : list[str]
+        txids : List[str]
             Array of transaction IDs.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("get_tx_notes", {"txids": txids})
 
-    async def set_attribute(self, key: str, value: str) -> dict:
+    async def set_attribute(self, key: str, value: str) -> Dict[str, Any]:
         """
         Set arbitrary attribute.
 
@@ -938,13 +962,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("set_attribute", {"key": key, "value": value})
 
-    async def get_attribute(self, key: str) -> dict:
+    async def get_attribute(self, key: str) -> Dict[str, Any]:
         """
         Get an attribute.
 
@@ -955,13 +979,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("get_attribute", {"key": key})
 
-    async def get_tx_key(self, txid: str) -> dict:
+    async def get_tx_key(self, txid: str) -> Dict[str, Any]:
         """
         Get transaction secret key.
 
@@ -972,13 +996,15 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("get_tx_key", {"txid": txid})
 
-    async def check_tx_key(self, txid: str, tx_key: str, address: str) -> dict:
+    async def check_tx_key(
+        self, txid: str, tx_key: str, address: str
+    ) -> Dict[str, Any]:
         """
         Check a transaction in the blockchain with its secret key.
 
@@ -993,7 +1019,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1003,7 +1029,7 @@ class Wallet:
 
     async def get_tx_proof(
         self, txid: str, address: str, message: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Generate a signature to prove a transaction in the blockchain.
 
@@ -1018,7 +1044,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1028,7 +1054,7 @@ class Wallet:
 
     async def check_tx_proof(
         self, txid: str, address: str, signature: str, message: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Prove a transaction by checking its signature.
 
@@ -1045,7 +1071,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1061,7 +1087,7 @@ class Wallet:
 
     async def get_spend_proof(
         self, txid: str, message: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Generate a signature to prove a spend using the key of the transaction.
 
@@ -1074,7 +1100,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1084,7 +1110,7 @@ class Wallet:
 
     async def check_spend_proof(
         self, txid: str, signature: str, message: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Prove a spend using the key of the transaction.
 
@@ -1099,7 +1125,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1114,7 +1140,7 @@ class Wallet:
         account_index: int,
         amount: int,
         message: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Generate a signature to prove of a reserve proof.
 
@@ -1131,7 +1157,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1147,7 +1173,7 @@ class Wallet:
 
     async def check_reserve_proof(
         self, address: str, signature: str, message: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Prove a wallet has a disposable reserve using a signature.
 
@@ -1162,7 +1188,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1182,8 +1208,8 @@ class Wallet:
         min_height: Optional[int] = None,
         max_height: Optional[int] = None,
         account_index: Optional[int] = None,
-        subaddr_indices: Optional[list[int]] = None,
-    ) -> dict:
+        subaddr_indices: Optional[List[int]] = None,
+    ) -> Dict[str, Any]:
         """
         Return a list of transfers.
 
@@ -1207,12 +1233,12 @@ class Wallet:
             Maximum block height to scan for transfers.
         account_index : int, optional
             Return transfers for this account.
-        subaddr_indices : list[int], optional
+        subaddr_indices : List[int], optional
             Array of subaddress indices to query.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1234,7 +1260,7 @@ class Wallet:
 
     async def get_transfer_by_txid(
         self, txid: str, account_index: Optional[int] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Return a list of transfers for the given txid.
 
@@ -1247,7 +1273,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1255,7 +1281,7 @@ class Wallet:
             "get_transfer_by_txid", {"txid": txid, "account_index": account_index}
         )
 
-    async def sign(self, data: str) -> dict:
+    async def sign(self, data: str) -> Dict[str, Any]:
         """
         Sign a string.
 
@@ -1266,13 +1292,15 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("sign", {"data": data})
 
-    async def verify(self, data: str, address: str, signature: str) -> dict:
+    async def verify(
+        self, data: str, address: str, signature: str
+    ) -> Dict[str, Any]:
         """
         Verify a signature on a string.
 
@@ -1287,7 +1315,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1295,19 +1323,19 @@ class Wallet:
             "verify", {"data": data, "address": address, "signature": signature}
         )
 
-    async def export_outputs(self) -> dict:
+    async def export_outputs(self) -> Dict[str, Any]:
         """
         Export all outputs in hex format.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("export_outputs", {})
 
-    async def import_outputs(self, outputs_data_hex: str) -> dict:
+    async def import_outputs(self, outputs_data_hex: str) -> Dict[str, Any]:
         """
         Import outputs in hex format.
 
@@ -1318,7 +1346,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1326,27 +1354,27 @@ class Wallet:
             "import_outputs", {"outputs_data_hex": outputs_data_hex}
         )
 
-    async def export_key_images(self) -> dict:
+    async def export_key_images(self) -> Dict[str, Any]:
         """
         Export a signed set of key images.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("export_key_images", {})
 
     async def import_key_images(
-        self, signed_key_images: list[str], key_image: str, signature: str
-    ) -> dict:
+        self, signed_key_images: List[str], key_image: str, signature: str
+    ) -> Dict[str, Any]:
         """
         Import signed key images list and verify their spent status.
 
         Parameters
         ----------
-        signed_key_images : list[str]
+        signed_key_images : List[str]
             Array of signed key images in hex format.
         key_image : str
             Key image to import.
@@ -1355,7 +1383,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1375,7 +1403,7 @@ class Wallet:
         payment_id: Optional[str] = None,
         recipient_name: Optional[str] = None,
         tx_description: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Create a payment URI using the official URI spec.
 
@@ -1394,7 +1422,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1409,7 +1437,7 @@ class Wallet:
             },
         )
 
-    async def parse_uri(self, uri: str) -> dict:
+    async def parse_uri(self, uri: str) -> Dict[str, Any]:
         """
         Parse a payment URI to get payment information.
 
@@ -1420,24 +1448,24 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("parse_uri", {"uri": uri})
 
-    async def get_address_book(self, entries: list[int]) -> dict:
+    async def get_address_book(self, entries: List[int]) -> Dict[str, Any]:
         """
         Return the wallet's address book.
 
         Parameters
         ----------
-        entries : list[int]
+        entries : List[int]
             Array of address book entries.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1448,7 +1476,7 @@ class Wallet:
         address: str,
         payment_id: Optional[str] = None,
         description: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Add an entry to the wallet's address book.
 
@@ -1463,7 +1491,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1485,7 +1513,7 @@ class Wallet:
         description: Optional[str] = None,
         set_payment_id: Optional[bool] = False,
         payment_id: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Edit an existing entry in the wallet's address book.
 
@@ -1508,7 +1536,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1525,7 +1553,7 @@ class Wallet:
             },
         )
 
-    async def delete_address_book(self, index: int) -> dict:
+    async def delete_address_book(self, index: int) -> Dict[str, Any]:
         """
         Delete an entry from the wallet's address book.
 
@@ -1536,13 +1564,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("delete_address_book", {"index": index})
 
-    async def refresh(self, start_height: Optional[int] = None) -> dict:
+    async def refresh(self, start_height: Optional[int] = None) -> Dict[str, Any]:
         """
         Refresh the wallet.
 
@@ -1553,7 +1581,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1561,7 +1589,7 @@ class Wallet:
 
     async def auto_refresh(
         self, enable: Optional[bool] = True, period: Optional[int] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Set whether to automatically refresh the wallet.
 
@@ -1574,7 +1602,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1582,13 +1610,13 @@ class Wallet:
             "auto_refresh", {"enable": enable, "period": period}
         )
 
-    async def rescan_spent(self) -> dict:
+    async def rescan_spent(self) -> Dict[str, Any]:
         """
         Re-scan spent outputs.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1596,7 +1624,7 @@ class Wallet:
 
     async def start_mining(
         self, threads_count: int, do_background_mining: bool, ignore_battery: bool
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Start mining in the wallet.
 
@@ -1611,7 +1639,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1624,7 +1652,7 @@ class Wallet:
             },
         )
 
-    async def set_donate_level(self, blocks: int) -> dict:
+    async def set_donate_level(self, blocks: int) -> Dict[str, Any]:
         """
         Set the donation level for the Nerva network.
 
@@ -1635,31 +1663,31 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("set_donate_level", {"blocks": blocks})
 
-    async def stop_mining(self) -> dict:
+    async def stop_mining(self) -> Dict[str, Any]:
         """
         Stop mining in the wallet.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("stop_mining", {})
 
-    async def get_languages(self) -> dict:
+    async def get_languages(self) -> Dict[str, Any]:
         """
         Return the list of available languages for the wallet's seed.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1670,7 +1698,7 @@ class Wallet:
         filename: str,
         language: str,
         password: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Create a new wallet.
 
@@ -1685,7 +1713,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1700,7 +1728,7 @@ class Wallet:
 
     async def create_hw_wallet(
         self, filename: str, language: str, device_name: str, restore_height: int
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Create a wallet from a hardware device.
 
@@ -1717,7 +1745,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1733,7 +1761,7 @@ class Wallet:
 
     async def open_wallet(
         self, filename: str, password: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Open a wallet.
 
@@ -1746,7 +1774,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1754,13 +1782,13 @@ class Wallet:
             "open_wallet", {"filename": filename, "password": password or ""}
         )
 
-    async def close_wallet(self) -> dict:
+    async def close_wallet(self) -> Dict[str, Any]:
         """
         Close the wallet.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1768,7 +1796,7 @@ class Wallet:
 
     async def change_wallet_password(
         self, old_password: Optional[str] = None, new_password: Optional[str] = None
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Change the wallet password.
 
@@ -1781,7 +1809,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1792,7 +1820,7 @@ class Wallet:
 
     async def restore_wallet_from_seed(
         self, filename: str, seed: str, restore_height: int
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Restore a wallet from a mnemonic seed.
 
@@ -1807,7 +1835,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1823,7 +1851,7 @@ class Wallet:
         viewkey: str,
         spendkey: str,
         restore_height: int,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Restore a wallet from a set of keys.
 
@@ -1842,7 +1870,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1857,39 +1885,39 @@ class Wallet:
             },
         )
 
-    async def is_multisig(self) -> dict:
+    async def is_multisig(self) -> Dict[str, Any]:
         """
         Check if the wallet is a multisig wallet.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("is_multisig", {})
 
-    async def prepare_multisig(self) -> dict:
+    async def prepare_multisig(self) -> Dict[str, Any]:
         """
         Prepare a wallet for multisig use.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("prepare_multisig", {})
 
     async def make_multisig(
-        self, multisig_info: list, threshold: int, password: str
-    ) -> dict:
+        self, multisig_info: List[str], threshold: int, password: str
+    ) -> Dict[str, Any]:
         """
         Make a wallet multisig.
 
         Parameters
         ----------
-        multisig_info : list
+        multisig_info : List[str]
             Array of multisig info from other participants.
         threshold : int
             Number of signatures needed to sign a transfer.
@@ -1898,7 +1926,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1911,51 +1939,51 @@ class Wallet:
             },
         )
 
-    async def export_multisig_info(self) -> dict:
+    async def export_multisig_info(self) -> Dict[str, Any]:
         """
         Export multisig info for other participants.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("export_multisig_info", {})
 
-    async def import_multisig_info(self, info: list[str]) -> dict:
+    async def import_multisig_info(self, info: List[str]) -> Dict[str, Any]:
         """
         Import multisig info from other participants.
 
         Parameters
         ----------
-        info : list[str]
+        info : List[str]
             Array of multisig info from other participants.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("import_multisig_info", {"info": info})
 
     async def finalize_multisig(
-        self, multisig_info: list[str], password: str
-    ) -> dict:
+        self, multisig_info: List[str], password: str
+    ) -> Dict[str, Any]:
         """
         Finalize a multisig wallet.
 
         Parameters
         ----------
-        multisig_info : list[str]
+        multisig_info : List[str]
             Array of multisig info from other participants.
         password : str
             Wallet password.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1965,21 +1993,21 @@ class Wallet:
         )
 
     async def exchange_multisig_keys(
-        self, multisig_info: list[str], password: str
-    ) -> dict:
+        self, multisig_info: List[str], password: str
+    ) -> Dict[str, Any]:
         """
         Exchange multisig keys with other participants.
 
         Parameters
         ----------
-        multisig_info : list[str]
+        multisig_info : List[str]
             Array of multisig info from other participants.
         password : str
             Wallet password.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -1988,7 +2016,7 @@ class Wallet:
             {"multisig_info": multisig_info, "password": password},
         )
 
-    async def sign_multisig(self, tx_data_hex: str) -> dict:
+    async def sign_multisig(self, tx_data_hex: str) -> Dict[str, Any]:
         """
         Sign a multisig transaction.
 
@@ -1999,13 +2027,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("sign_multisig", {"tx_data_hex": tx_data_hex})
 
-    async def submit_multisig(self, tx_data_hex: str) -> dict:
+    async def submit_multisig(self, tx_data_hex: str) -> Dict[str, Any]:
         """
         Submit a signed multisig transaction.
 
@@ -2016,7 +2044,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The submitted transaction.
 
         """
@@ -2027,7 +2055,7 @@ class Wallet:
         address: str,
         any_net_type: Optional[bool] = False,
         allow_openalias: Optional[bool] = False,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Validate a public address.
 
@@ -2043,7 +2071,7 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -2064,9 +2092,9 @@ class Wallet:
         ssl_private_key_path: Optional[str] = None,
         ssl_certificate_path: Optional[str] = None,
         ssl_ca_file: Optional[str] = None,
-        ssl_allowed_fingerprints: Optional[list[str]] = None,
+        ssl_allowed_fingerprints: Optional[List[str]] = None,
         ssl_allow_any_cert: Optional[bool] = False,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Set the daemon address.
 
@@ -2084,14 +2112,14 @@ class Wallet:
             SSL certificate path.
         ssl_ca_file : str, optional
             SSL CA file.
-        ssl_allowed_fingerprints : list[str], optional
+        ssl_allowed_fingerprints : List[str], optional
             SSL allowed fingerprints.
         ssl_allow_any_cert : bool, optional
             Allow any certificate.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
@@ -2109,7 +2137,7 @@ class Wallet:
             },
         )
 
-    async def set_log_level(self, level: int) -> dict:
+    async def set_log_level(self, level: int) -> Dict[str, Any]:
         """
         Set the log level.
 
@@ -2120,13 +2148,13 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("set_log_level", {"level": level})
 
-    async def set_log_categories(self, categories: str) -> dict:
+    async def set_log_categories(self, categories: str) -> Dict[str, Any]:
         """
         Set the log categories.
 
@@ -2137,19 +2165,19 @@ class Wallet:
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """
         return await self._request("set_log_categories", {"categories": categories})
 
-    async def get_version(self) -> dict:
+    async def get_version(self) -> Dict[str, Any]:
         """
         Get the wallet version.
 
         Returns
         -------
-        dict
+        Dict[str, Any]
             The response from wallet RPC.
 
         """

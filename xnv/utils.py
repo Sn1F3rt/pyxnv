@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 import string
 
@@ -30,10 +32,11 @@ def calculate_seconds_from_time_string(time_string: str) -> int:
         The number of seconds in the time string.
 
     """
-    time = time_string.split(" ")
+    time: list = time_string.split(" ")
 
-    seconds = 0
+    seconds: int = 0
 
+    t: str
     for t in time:
         if t.endswith("s"):
             seconds += int(t[:-1])

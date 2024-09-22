@@ -24,13 +24,18 @@ Python bindings for the JSON RPC interface of the Nerva cryptocurrency.
 ### Requirements
 
 - Python 3.8+
-- aiohttp
+- [`poetry`](https://python-poetry.org/)
 
 ### Setup
 
 To install current latest release you can use following command:
 ```sh
-python -m pip install pyxnv
+poetry add pyxnv
+```
+
+To install the latest development version you can use following command:
+```sh
+poetry add git+https://github.com/Sn1F3rt/pyxnv.git --branch main --with dev
 ```
 
 ## Documentation
@@ -42,11 +47,11 @@ Here is a simple example to get you started:
 ```python
 import asyncio
 
-from xnv import Daemon
+from xnv.daemon import DaemonJSONRPC
 
 
 async def main():
-    daemon = Daemon(
+    daemon = DaemonJSONRPC(
         host="x.y.z.w",
     )
 

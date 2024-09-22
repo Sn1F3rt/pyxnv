@@ -1,10 +1,6 @@
-from typing import NamedTuple, Literal
+from typing import Literal, NamedTuple
 
-from . import (
-    daemon as daemon,
-    wallet as wallet,
-    utils as utils,
-)
+from . import utils as utils, daemon as daemon, wallet as wallet
 
 
 class VersionInfo(NamedTuple):

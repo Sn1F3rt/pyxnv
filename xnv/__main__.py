@@ -1,11 +1,10 @@
-from typing import Tuple
-
-import argparse
 import sys
+import argparse
+import platform
+
+import aiohttp
 
 import xnv
-import aiohttp
-import platform
 
 
 def show_version() -> None:
@@ -38,7 +37,7 @@ def core(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
         parser.print_help()
 
 
-def parse_args() -> Tuple[argparse.ArgumentParser, argparse.Namespace]:
+def parse_args() -> tuple[argparse.ArgumentParser, argparse.Namespace]:
     parser = argparse.ArgumentParser(
         prog="pyxnv", description="Tools for helping with the library"
     )

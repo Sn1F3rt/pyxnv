@@ -1,6 +1,7 @@
 # Nerva Python Library
 
-[![Lint](https://github.com/Sn1F3rt/pyxnv/actions/workflows/black.yml/badge.svg)](https://github.com/Sn1F3rt/pyxnv/actions/workflows/black.yml)
+[![black](https://github.com/Sn1F3rt/pyxnv/actions/workflows/black.yml/badge.svg)](https://github.com/Sn1F3rt/pyxnv/actions/workflows/black.yml)
+[![isort](https://github.com/Sn1F3rt/pyxnv/actions/workflows/isort.yml/badge.svg)](https://github.com/Sn1F3rt/pyxnv/actions/workflows/isort.yml)
 [![License](https://img.shields.io/github/license/Sn1F3rt/pyxnv)](LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Sn1F3rt/pyxnv)](https://github.com/Sn1F3rt/pyxnv/commits/main/)
 [![GitHub stars](https://img.shields.io/github/stars/Sn1F3rt/pyxnv)](https://github.com/Sn1F3rt/pyxnv/)

@@ -24,13 +24,13 @@ Python bindings for the JSON RPC interface of the Nerva cryptocurrency.
 ### Requirements
 
 - Python 3.8+
-- [`poetry`](https://python-poetry.org/)
+- [`poetry`](https://python-poetry.org/) _(for development only)_
 
 ### Setup
 
 To install current latest release you can use following command:
 ```sh
-poetry add pyxnv
+pip install pyxnv
 ```
 
 To install the latest development version you can use following command:
